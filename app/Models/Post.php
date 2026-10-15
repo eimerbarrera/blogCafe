@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
+
 class Post extends Model
 {
     use HasFactory;
@@ -23,6 +24,13 @@ class Post extends Model
         'featured_image',
         'published_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'published_at' => 'datetime',
+        ];
+    }
 
     /**
      * El método "booted" del modelo para manejar eventos.
