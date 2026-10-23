@@ -24,7 +24,7 @@
                         <div class="about-us">
                             <!-- Imagen adaptada con la ruta dinámica de Laravel -->
                             <div class="about-us__image">
-                                <img src="{{ asset('assets/img/pic/about-us.jpg') }}"
+                                <img src="{{ asset('assets/img/pic/img_contact_1.png') }}"
                                     alt="Cosecha y Grano - Nuestra Historia" class="about-us__img">
                             </div>
                             <div class="about-us__description">

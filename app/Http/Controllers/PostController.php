@@ -85,6 +85,26 @@ class PostController extends Controller
         return view('blog.view', compact('post', 'latestPosts', 'categories', 'previousPost', 'nextPost')); // O 'blog.show' según la ruta de tu archivo blade
     }
 
+    public function blog()
+    {
+        // obtener los posts con paginacion (6 por pagina)
+        $posts = Post::with(['user', 'categories', 'tags'])
+            ->latest('published_at')
+            ->paginate(6);
+
+        $latestPosts = Post::query()
+            ->where('status', 'published')
+            ->whereNotNull('published_at')
+            ->latest('published_at')
+            ->latest('id')
+            ->take(4)
+            ->get();
+
+        $categories = Category::withCount('posts')->get();
+
+        return view('blog.index', compact('posts', 'latestPosts', 'categories'));
+    }
+
     /**
      * Show the form for editing the specified resource.
      */
