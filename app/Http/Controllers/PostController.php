@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\Category;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -102,7 +103,15 @@ class PostController extends Controller
 
         $categories = Category::withCount('posts')->get();
 
-        return view('blog.index', compact('posts', 'latestPosts', 'categories'));
+
+        $tags = $posts->getCollection()
+            ->flatMap(fn($post) => $post->tags)
+            ->unique('id')
+            ->values();
+
+
+
+        return view('blog.index', compact('posts', 'latestPosts', 'categories', 'tags'));
     }
 
     /**
