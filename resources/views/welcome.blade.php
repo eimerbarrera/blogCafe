@@ -112,6 +112,16 @@
                                         <a href="#" class="category">Café de Especialidad</a>
                                     @endif
 
+                                    @if ($post->tags->isNotEmpty())
+                                        <ul class="list-inline widget__tags">
+                                            @foreach ($post->tags as $tag)
+                                                <li class="widget__tags-item">
+                                                    <a href="#" class="widget__tags-link">{{ $tag->name }}</a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
+
                                     <h5 class="post-card__title">
                                         <a href="{{ route('blog.show', ['id' => $post->id, 'slug' => $post->slug]) }}" class="post-card__title-link">{{ $post->title }}</a>
                                     </h5>

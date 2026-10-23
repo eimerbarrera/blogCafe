@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'social' => [
+        'facebook' => env('FACEBOOK_URL', '#'),
+        'instagram' => env('INSTAGRAM_URL', '#'),
+        'youtube' => env('YOUTUBE_URL', '#'),
+    ],
+
 ];

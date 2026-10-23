@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -55,15 +56,33 @@ class PostController extends Controller
      */
     public function show($id, $slug)
     {
-        // Buscamos el post por su ID y verificamos que el slug coincida
+        //1. Buscamos el post por su ID y verificamos que el slug coincida
         $post = Post::with(['user', 'categories', 'tags'])->findOrFail($id);
 
-        // Opcional pero recomendado: Si el slug de la URL no coincide con el de la BD, redirigir por SEO
+        //2. Opcional pero recomendado: Si el slug de la URL no coincide con el de la BD, redirigir por SEO
         if ($post->slug !== $slug) {
-            return redirect()->route('blog.show', ['id' => $post->id, 'slug' => $post->slug]);
+            return redirect()->route('blog.show', ['id' => $post->id, 'slug' => $post->slug], 301);
         }
 
-        return view('blog.view', compact('post')); // O 'blog.show' según la ruta de tu archivo blade
+        //3. Obtenemos los últimos 4 posts publicados para mostrar en la barra lateral
+        $latestPosts = Post::query()
+            ->where('status', 'published')
+            ->whereNotNull('published_at')
+            ->latest('published_at')
+            ->latest('id')
+            ->take(4)
+            ->get();
+
+        //4. Obtenemos las categorías con el conteo dinámico de sus posts asociados
+        $categories = Category::withCount('posts')->get();
+
+        // 5. Navegación: Post Anterior (el ID menor más cercano)
+        $previousPost = Post::where('id', '<', $post->id)->orderBy('id', 'desc')->first();
+
+        // 6. Navegación: Post Siguiente (el ID mayor más cercano)
+        $nextPost = Post::where('id', '>', $post->id)->orderBy('id', 'asc')->first();
+
+        return view('blog.view', compact('post', 'latestPosts', 'categories', 'previousPost', 'nextPost')); // O 'blog.show' según la ruta de tu archivo blade
     }
 
     /**

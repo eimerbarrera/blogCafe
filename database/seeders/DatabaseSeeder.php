@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use App\Models\Category;
-use App\Models\Tag;
-use App\Models\Post;
 use App\Models\Media;
+use App\Models\Post;
+use App\Models\Tag;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -24,37 +24,57 @@ class DatabaseSeeder extends Seeder
         // 1. Crear 5 Usuarios (1 Admin + 4 Autores/Lectores)
         $admin = User::create([
             'name' => 'Carlos Barista',
-            'email' => 'admin@granoagrano.com',
+            'email' => 'admin@cosechaygrano.com',
             'password' => Hash::make('password123'),
             'role' => 'admin',
+            'description' => 'Apasionado por el café de especialidad, maestro tostador y encargado de compartir las mejores historias de nuestra tierra grano a grano.',
+            'urlfacebook' => 'https://facebook.com/carlos.barista',
+            'urlinstagram' => 'https://instagram.com/carlos.barista',
+            'urlyoutube' => 'https://youtube.com/@carlosbarista',
         ]);
 
         $editor1 = User::create([
             'name' => 'Luisa Tostadora',
-            'email' => 'editor1@granoagrano.com',
+            'email' => 'editor1@cosechaygrano.com',
             'password' => Hash::make('password123'),
             'role' => 'editor',
+            'description' => 'Catadora profesional y amante de los procesos de fermentación. Creo firmemente que cada taza cuenta una historia única.',
+            'urlfacebook' => 'https://facebook.com/luisa.tostadora',
+            'urlinstagram' => 'https://instagram.com/luisa.tostadora',
+            'urlyoutube' => null,
         ]);
 
         $editor2 = User::create([
             'name' => 'Andrés Barista',
-            'email' => 'editor2@granoagrano.com',
+            'email' => 'editor2@cosechaygrano.com',
             'password' => Hash::make('password123'),
             'role' => 'editor',
+            'description' => 'Barista y formador. Explorando siempre nuevas técnicas de extracción y métodos de filtrado artesanal.',
+            'urlfacebook' => 'https://facebook.com/andres.barista',
+            'urlinstagram' => 'https://instagram.com/andres.barista',
+            'urlyoutube' => 'https://youtube.com/@andresbarista',
         ]);
 
         $user1 = User::create([
             'name' => 'Sofía Amante del Café',
-            'email' => 'user1@granoagrano.com',
+            'email' => 'user1@cosechaygrano.com',
             'password' => Hash::make('password123'),
             'role' => 'user',
+            'description' => 'Consumidora curiosa aprendiendo sobre el mundo del café de especialidad y apoyando a los caficultores locales.',
+            'urlfacebook' => null,
+            'urlinstagram' => 'https://instagram.com/sofia.cafe',
+            'urlyoutube' => null,
         ]);
 
         $user2 = User::create([
             'name' => 'Mateo Cafetero',
-            'email' => 'user2@granoagrano.com',
+            'email' => 'user2@cosechaygrano.com',
             'password' => Hash::make('password123'),
             'role' => 'user',
+            'description' => 'Entusiasta del buen café y buscador de experiencias auténticas en cada grano.',
+            'urlfacebook' => null,
+            'urlinstagram' => null,
+            'urlyoutube' => null,
         ]);
 
         $allUsers = collect([$admin, $editor1, $editor2, $user1, $user2]);
@@ -89,14 +109,14 @@ class DatabaseSeeder extends Seeder
 
         // 4. Crear 20 Posts con sus detalles, relaciones de categorías, tags y media
         for ($i = 1; $i <= 20; $i++) {
-            $title = "Café Grano a Grano: Experiencia y evolución cafetera #{$i}";
+            $title = "Café Cosecha y Grano: Experiencia y evolución cafetera #{$i}";
 
             $post = Post::create([
                 'user_id' => $allUsers->random()->id,
                 'title' => $title,
                 'slug' => Str::slug($title),
                 'summary' => "Resumen detallado del artículo número {$i} enfocado en la cultura del café colombiano.",
-                'content' => "Contenido completo y extendido del post {$i}. Aquí describimos paso a paso el proceso, tips de preparación, recomendaciones de los cafeteros y todo lo necesario para vivir la pasión del café grano a grano en cada etapa.",
+                'content' => "Contenido completo y extendido del post {$i}. Aquí describimos paso a paso el proceso, tips de preparación, recomendaciones de los cafeteros y todo lo necesario para vivir la pasión del café cosecha y grano en cada etapa.",
                 'status' => 'published',
                 'featured_image' => 'images/posts/default-coffee.jpg',
                 'published_at' => now()->subDays(20 - $i),
@@ -115,7 +135,7 @@ class DatabaseSeeder extends Seeder
             // Crear el registro multimedia asociado al post (tabla media)
             Media::create([
                 'post_id' => $post->id,
-                'file_path' => 'images/media/coffee-media-' . $i . '.jpg',
+                'file_path' => 'images/media/coffee-media-'.$i.'.jpg',
                 'file_type' => 'image/jpeg',
             ]);
         }
