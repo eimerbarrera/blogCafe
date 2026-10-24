@@ -18,6 +18,14 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-8">
+
+                        @if ($search)
+                            <div class="alert alert-info text-center my-5 py-4">
+                                <h4>Resultados de búsqueda para: "{{ $search }}"</h4>
+                                <p class="mb-0">Se han encontrado {{ $posts->total() }} resultados.</p>
+                            </div>
+                        @endif
+
                         <div class="banner__content">
                             <!-- Migas de pan dinámicas -->
                             <small class="banner__meta">
@@ -27,7 +35,13 @@
 
                             <!-- Título principal adaptado -->
                             <h3 class="banner__title">
-                                Sección: <span class="banner__category-color">Café y Artículos</span>
+                                @if (isset($category))
+                                    Categoría: <span class="banner__category-color">{{ $category->name }}</span>
+                                @elseif(isset($tag))
+                                    Etiqueta: <span class="banner__category-color">#{{ $tag->name }}</span>
+                                @else
+                                    Sección: <span class="banner__category-color">Café y Artículos</span>
+                                @endif
                             </h3>
 
                             <!-- Subtítulo con la esencia de Cosecha y Grano -->
@@ -65,12 +79,12 @@
                                             <!-- Contenido del Post -->
                                             <div class="post-card__content">
                                                 <!-- Categoría -->
-                                                @if ($post->category)
-                                                    <a href="{{ route('blog.category', $post->category->slug) }}"
+                                                @foreach ($post->categories as $postCategory)
+                                                    <a href="{{ route('blog.category', $postCategory->slug) }}"
                                                         class="category">
-                                                        {{ $post->category->name }}
+                                                        {{ $postCategory->name }}
                                                     </a>
-                                                @endif
+                                                @endforeach
 
                                                 <!-- Título -->
                                                 <h4 class="post-card__title">
@@ -127,7 +141,7 @@
                             <!--pagination-->
                             <div class="row">
                                 <div class="col-lg-12">
-                                    {{ $posts->links('pagination::bootstrap-4') }}
+                                    {{ $posts->appends(['search' => request('search')])->links('pagination::bootstrap-4') }}
                                 </div>
                             </div>
                         </div>
@@ -178,12 +192,12 @@
 
                             <!--widget-categories-->
                             <div class="widget">
-                                <h5 class="widget__title">Categories</h5>
+                                <h5 class="widget__title">Categorias</h5>
                                 <ul class="widget__categories">
                                     @forelse($categories as $category)
                                         <li class="widget__categories-item">
-                                            {{-- Ruta dinámica para filtrar por categoría (puedes ajustarla según tu ruta de catálogos o filtro) --}}
-                                            <a href="#" class="category widget__categories-link">
+                                            <a href="{{ route('blog.category', $category->slug) }}"
+                                                class="category">
                                                 {{ $category->name }}
                                             </a>
                                             <span class="ml-auto widget__categories-number">
@@ -200,11 +214,12 @@
                             <!--widget-tags-->
                             @if ($tags->isNotEmpty())
                                 <div class="widget">
-                                    <h5 class="widget__title">Tags</h5>
+                                    <h5 class="widget__title">Etiquetas</h5>
                                     <ul class="list-inline widget__tags">
                                         @foreach ($tags as $tag)
                                             <li class="widget__tags-item">
-                                                <a href="#" class="widget__tags-link">{{ $tag->name }}</a>
+                                                <a href="{{ route('blog.tag', $tag->slug) }}"
+                                                    class="widget__tags-link">#{{ $tag->name }}</a>
                                             </li>
                                         @endforeach
                                     </ul>
@@ -237,24 +252,8 @@
     @include('partials.footer')
 
     <!--Search-form-->
-    <div class="search__box">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-6 m-auto col-md-8 col-sm-11">
-                    <div class="search__content ">
-                        <button type="button" class="search__box-btn-close">
-                            <i class="bi bi-x-lg"></i>
-                        </button>
-                        <form class="search__form" action="search-page.html">
-                            <input type="search" class="search__form-input" value=""
-                                placeholder="What are you looking for?">
-                            <button type="submit" class="search__form-btn-search">search</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('partials.search')
+
 
     <!--plugins -->
     @include('partials.js')

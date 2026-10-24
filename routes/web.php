@@ -10,6 +10,12 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/blog/categoria/{category:slug}', [PostController::class, 'byCategory'])
+    ->name('blog.category');
+
+Route::get('/blog/etiqueta/{tag:slug}', [PostController::class, 'byTag'])
+    ->name('blog.tag');
+
 Route::get('/blog/{id}/{slug}', [PostController::class, 'show'])
     ->where(['id' => '[0-9]+'])
     ->name('blog.show');
@@ -24,4 +30,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

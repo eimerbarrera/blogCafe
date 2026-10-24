@@ -5,14 +5,9 @@
                 <div class="newslettre">
                     <div class="newslettre__info ">
                         <h3 class="newslettre__title">¡Visita nuestras historias de café!</h3>
-                        <p class="newslettre__desc"> Suscríbete y entérate grano a grano sobre las nuevas publicaciones de nuestra cosecha. </p>
+                        <p class="newslettre__desc"> Suscríbete y entérate grano a grano sobre las nuevas publicaciones
+                            de nuestra cosecha. </p>
                     </div>
-
-                    {{-- <form action="#" class="newslettre__form">
-                                <input type="email" class="newslettre__form-input form-control"
-                                    placeholder="Your email adress" required="required">
-                                <button class="newslettre__form-submit" type="submit">Subscribe</button>
-                            </form> --}}
 
                     <ul class="list-inline social-media social-media--layout-three">
                         <li class="social-media__item">

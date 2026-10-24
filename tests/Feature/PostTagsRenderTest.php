@@ -39,6 +39,7 @@ class PostTagsRenderTest extends TestCase
 
         foreach ($tags as $tag) {
             self::assertSame(2, substr_count($response->getContent(), $tag->name));
+            $response->assertSee(route('blog.tag', $tag->slug), false);
         }
     }
 

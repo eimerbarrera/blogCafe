@@ -72,7 +72,8 @@
                                         <ul class="list-inline widget__tags">
                                             @foreach ($post->tags as $tag)
                                                 <li class="widget__tags-item">
-                                                    <a href="#" class="widget__tags-link">{{ $tag->name }}</a>
+                                                    <a href="{{ route('blog.tag', $tag->slug) }}"
+                                                        class="widget__tags-link">{{ $tag->name }}</a>
                                                 </li>
                                             @endforeach
                                         </ul>
@@ -249,12 +250,11 @@
 
                             <!--widget-categories-->
                             <div class="widget">
-                                <h5 class="widget__title">Categories</h5>
+                                <h5 class="widget__title">Categorias</h5>
                                 <ul class="widget__categories">
                                     @forelse($categories as $category)
                                         <li class="widget__categories-item">
-                                            {{-- Ruta dinámica para filtrar por categoría (puedes ajustarla según tu ruta de catálogos o filtro) --}}
-                                            <a href="#" class="category widget__categories-link">
+                                            <a href="{{ route('blog.category', $category->slug) }}" class="category">
                                                 {{ $category->name }}
                                             </a>
                                             <span class="ml-auto widget__categories-number">
@@ -271,11 +271,12 @@
                             <!--widget-tags-->
                             @if ($post->tags->isNotEmpty())
                                 <div class="widget">
-                                    <h5 class="widget__title">Tags</h5>
+                                    <h5 class="widget__title">Etiquetas</h5>
                                     <ul class="list-inline widget__tags">
                                         @foreach ($post->tags as $tag)
                                             <li class="widget__tags-item">
-                                                <a href="#" class="widget__tags-link">{{ $tag->name }}</a>
+                                                <a href="{{ route('blog.tag', $tag->slug) }}"
+                                                    class="widget__tags-link">#{{ $tag->name }}</a>
                                             </li>
                                         @endforeach
                                     </ul>
@@ -305,24 +306,7 @@
     @include('partials.footer')
 
     <!--Search-form-->
-    <div class="search__box">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-6 m-auto col-md-8 col-sm-11">
-                    <div class="search__content ">
-                        <button type="button" class="search__box-btn-close">
-                            <i class="bi bi-x-lg"></i>
-                        </button>
-                        <form class="search__form" action="search-page.html">
-                            <input type="search" class="search__form-input" value=""
-                                placeholder="What are you looking for?">
-                            <button type="submit" class="search__form-btn-search">search</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('partials.search')
 
     <!--plugins -->
     @include('partials.js')
