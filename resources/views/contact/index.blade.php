@@ -1,22 +1,10 @@
-<!doctype html>
-<html lang="es">
+@extends('layouts.base')
 
-<head>
-    @include('partials.head')
-</head>
+@section('title', 'Blog - Cosecha y Grano')
 
-<body>
-    <!--loading -->
-    @include('partials.loading')
-    <!--/-->
+@section('content')
 
-    <!-- Header -->
-    @include('partials.header')
-    <!--/-->
-
-    <main class="main">
-
-        <!--about-us-->
+        <!--Contact-->
         <section class="m-top mb-10">
             <div class="container-fluid">
                 <div class="row">
@@ -78,16 +66,4 @@
         <!--newslettre-->
         @include('partials.newslettre')
 
-    </main>
-
-    <!--footer-->
-    @include('partials.footer')
-
-    <!--Search-form-->
-    @include('partials.search')
-    
-    @include('partials.js')
-
-</body>
-
-</html>
+    @endsection
