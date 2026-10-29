@@ -30,6 +30,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/mis-posts', [PostController::class, 'myPosts'])->name('blog.list');
+
+    // Rutas para la creación de posts
+    Route::get('/mis-posts/crear', [PostController::class, 'create'])->name('posts.create');
+    Route::post('/mis-posts', [PostController::class, 'store'])->name('posts.store');
 });
 
 require __DIR__.'/auth.php';

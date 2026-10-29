@@ -22,7 +22,7 @@
 
                 <!-- Botón a la derecha alineado -->
                 <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                    <a href="#" class="btn-custom">
+                    <a href="{{ route('posts.create') }}" class="btn-custom">
                         <i class="bi bi-plus-lg"></i> Crear Nuevo Post
                     </a>
                 </div>
@@ -79,7 +79,7 @@
 
                             <!-- Botones de Acción (Ver / Editar / Eliminar) -->
                             <div class="d-flex mt-3 mt-md-0 ms-md-3 flex-shrink-0 gap-2">
-                                <a href="{{ route('blog.show', ['id' => $post->id, 'slug' => $post->slug]) }}" class="btn btn-sm btn-outline-primary" title="Ver">
+                                <a href="{{ route('blog.show', ['id' => $post->id, 'slug' => $post->slug]) }}" class="btn btn-sm btn-outline-success" title="Ver">
                                     <i class="bi bi-eye"></i>
                                 </a>
                                 <a href="#" class="btn btn-sm btn-outline-primary" title="Editar">
