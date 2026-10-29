@@ -67,7 +67,7 @@
                                         </small>
                                     </div>
                                     <h5 class="post-card__title mb-1">
-                                        <a href="#" class="text-decoration-none">
+                                        <a href="{{ route('blog.show', ['id' => $post->id, 'slug' => $post->slug]) }}" class="text-decoration-none">
                                             {{ $post->title }}
                                         </a>
                                     </h5>
@@ -77,10 +77,13 @@
                                 </div>
                             </div>
 
-                            <!-- Botones de Acción (Editar / Eliminar) -->
+                            <!-- Botones de Acción (Ver / Editar / Eliminar) -->
                             <div class="d-flex mt-3 mt-md-0 ms-md-3 flex-shrink-0 gap-2">
+                                <a href="{{ route('blog.show', ['id' => $post->id, 'slug' => $post->slug]) }}" class="btn btn-sm btn-outline-primary" title="Ver">
+                                    <i class="bi bi-eye"></i>
+                                </a>
                                 <a href="#" class="btn btn-sm btn-outline-primary" title="Editar">
-                                    <i class="bi bi-pencil"></i> Editar
+                                    <i class="bi bi-pencil"></i>
                                 </a>
 
                                 <form action="#" method="POST"
@@ -104,8 +107,10 @@
                     @endforelse
 
                     <!-- Paginación -->
-                    <div class="pagination-area mt-4">
-                        {{ $posts->links() }}
+                    <div class="row">
+                        <div class="col-lg-12">
+                            {{ $posts->links('pagination::bootstrap-4') }}
+                        </div>
                     </div>
                 </div>
             </div>
