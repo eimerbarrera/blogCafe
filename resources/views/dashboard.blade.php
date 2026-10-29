@@ -1,17 +1,31 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
+@extends('layouts.base')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    {{ __("You're logged in!") }}
+@section('title', 'Blog - Cosecha y Grano')
+
+@section('content')
+    <section class="banner">
+        <div class="row">
+            <div class="container-fluid">
+                <div class="col-lg-8">
+                    <div class="banner__content">
+                        <!-- Título principal adaptado -->
+                        <h3 class="banner__title">
+                            Bienvenido: <span class="banner__category-color">{{ auth()->user()->name }}</span>
+                        </h3>
+
+                        <p class="banner__subtitle">
+                            <strong>Rol:</strong><span class="banner__category-color"> {{ auth()->user()->role }} </span>
+                        </p>
+                        <p class="banner__subtitle">
+                            <strong>Descripción:</strong><span class="banner__category-color"> {{ auth()->user()->description }} </span>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</x-app-layout>
+    </section>
+
+    <!--newslettre-->
+    @include('partials.newslettre')
+
+@endsection

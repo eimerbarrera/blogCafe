@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -123,6 +124,20 @@ class PostController extends Controller
 
         return view('blog.index', compact('posts', 'latestPosts', 'categories', 'tags', 'search'));
     }
+
+    // Listar los posts del usuario con sesión activa
+public function myPosts()
+{
+    // Obtenemos los posts del usuario logueado, paginados de 6 en 6
+    $posts = Post::where('user_id', Auth::id())
+                ->latest('published_at')
+                ->latest('id')
+                ->paginate(6);
+
+    return view('blog.list', compact('posts'));
+}
+
+
 
     // Filtrar por Categoría
     public function byCategory(Category $category, Request $request)

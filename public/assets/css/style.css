@@ -857,6 +857,14 @@ ul {
   padding-left: 6px;
 }
 
+@media all and (min-width: 1201px) {
+  .header__navbar {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
 @media all and (min-width: 1200px) {
   .navbar-expand-xl .navbar-nav .nav-link {
     padding-right: 40px;
