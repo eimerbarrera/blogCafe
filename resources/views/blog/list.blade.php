@@ -58,7 +58,7 @@
                                 <div class="post-card__content w-100">
                                     <div class="d-flex justify-content-between align-items-center mb-1">
                                         <span
-                                            class="badge {{ $post->status == 'published' ? 'bg-success' : 'bg-secondary' }}">
+                                            class="badge {{ $post->status == 'publicado' ? 'bg-success' : 'bg-warning text-dark' }}">
                                             {{ ucfirst($post->status) }}
                                         </span>
                                         <small class="text-muted">
@@ -82,7 +82,7 @@
                                 <a href="{{ route('blog.show', ['id' => $post->id, 'slug' => $post->slug]) }}" class="btn btn-sm btn-outline-success" title="Ver">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <a href="#" class="btn btn-sm btn-outline-primary" title="Editar">
+                                <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-sm btn-outline-primary" title="Editar">
                                     <i class="bi bi-pencil"></i>
                                 </a>
 

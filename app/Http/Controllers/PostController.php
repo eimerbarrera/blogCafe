@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class PostController extends Controller
 {
@@ -63,7 +64,7 @@ class PostController extends Controller
             'featured_image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048', // Máximo 2MB
             'categories' => 'required|array|min:1', // Al menos una categoría seleccionada
             'tags' => 'required|array|min:1', // Al menos una Etiqueta seleccionada
-            'status' => 'required|in:draft,published',
+            'status' => 'required|in:borrador,publicado',
         ]);
 
         // 2. Manejar la subida de la imagen destacada si existe
@@ -81,7 +82,7 @@ class PostController extends Controller
             'content' => $request->content,
             'status' => $request->status,
             'featured_image' => $imagePath,
-            'published_at' => $request->status == 'published' ? now() : null,
+            'published_at' => $request->status == 'publicado' ? now() : null,
         ]);
 
         // 4. Sincronizar relaciones de categorías y etiquetas
@@ -112,7 +113,7 @@ class PostController extends Controller
 
         // 3. Obtenemos los últimos 4 posts publicados para mostrar en la barra lateral
         $latestPosts = Post::query()
-            ->where('status', 'published')
+            ->where('status', 'publicado')
             ->whereNotNull('published_at')
             ->latest('published_at')
             ->latest('id')
@@ -152,7 +153,7 @@ class PostController extends Controller
         $posts = $postsQuery->paginate(6)->appends(['search' => $search]);
 
         $latestPosts = Post::query()
-            ->where('status', 'published')
+            ->where('status', 'publicado')
             ->whereNotNull('published_at')
             ->latest('published_at')
             ->latest('id')
@@ -174,7 +175,7 @@ class PostController extends Controller
     {
         // Obtenemos los posts del usuario logueado, paginados de 6 en 6
         $posts = Post::where('user_id', Auth::id())
-            ->latest('published_at')
+            ->latest('updated_at')
             ->latest('id')
             ->paginate(6);
 
@@ -203,7 +204,7 @@ class PostController extends Controller
         $posts = $postsQuery->paginate(6)->appends(['search' => $search]);
 
         $latestPosts = Post::query()
-            ->where('status', 'published')
+            ->where('status', 'publicado')
             ->whereNotNull('published_at')
             ->latest('published_at')
             ->latest('id')
@@ -240,7 +241,7 @@ class PostController extends Controller
         $posts = $postsQuery->paginate(6)->appends(['search' => $search]);
 
         $latestPosts = Post::query()
-            ->where('status', 'published')
+            ->where('status', 'publicado')
             ->whereNotNull('published_at')
             ->latest('published_at')
             ->latest('id')
@@ -258,19 +259,70 @@ class PostController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Muestra el formulario para editar un post existente.
      */
-    public function edit(string $id)
+    public function edit(Post $post)
     {
-        //
+        // Opcional de seguridad: verificar que el post sea del usuario logueado
+        if ($post->user_id !== Auth::id()) {
+            abort(403, 'No tienes permisos para editar este blog.');
+        }
+
+        $categories = Category::all();
+        $tags = Tag::all();
+
+        return view('blog.edit', compact('post', 'categories', 'tags'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza el post en la base de datos.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Post $post)
     {
-        //
+        // Validación de seguridad de propiedad
+        if ($post->user_id !== Auth::id()) {
+            abort(403, 'No tienes permisos para modificar este blog.');
+        }
+
+        // 1. Validar los datos del formulario (imagen opcional al editar, máx 5MB)
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'summary' => 'nullable|string|max:500',
+            'content' => 'required|string',
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048', // Máximo 2MB
+            'categories' => 'required|array|min:1',
+            'tags' => 'required|array|min:1',
+            'status' => 'required|in:borrador,publicado',
+        ]);
+
+        // 2. Manejar la nueva imagen destacada si se subió una
+        $imagePath = $post->featured_image; // Mantenemos la anterior por defecto
+        if ($request->hasFile('featured_image')) {
+            // Eliminar la imagen anterior si existe físicamente
+            if ($post->featured_image && Storage::disk('public')->exists($post->featured_image)) {
+                Storage::disk('public')->delete($post->featured_image);
+            }
+            // Guardar la nueva
+            $imagePath = $request->file('featured_image')->store('blog', 'public');
+        }
+
+        // 3. Actualizar los datos del post
+        $post->update([
+            'title' => $request->title,
+            'slug' => Str::slug($request->title) . '-' . $post->id, // Actualizamos el slug manteniendo el ID único
+            'summary' => $request->summary,
+            'content' => $request->content,
+            'status' => $request->status,
+            'featured_image' => $imagePath,
+            'published_at' => $request->status == 'publicado' && !$post->published_at ? now() : $post->published_at,
+        ]);
+
+        // 4. Sincronizar las relaciones de categorías y etiquetas
+        $post->categories()->sync($request->categories);
+        $post->tags()->sync($request->tags);
+
+        // 5. Redireccionar al listado con mensaje de éxito
+        return redirect()->route('blog.list')->with('success', '¡Blog actualizado exitosamente!');
     }
 
     /**

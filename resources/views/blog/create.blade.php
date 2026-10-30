@@ -147,9 +147,9 @@
                                     <select name="status" id="status"
                                         class="form-control widget__form-input @error('status') is-invalid @enderror"
                                         required>
-                                        <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>
+                                        <option value="publicado" {{ old('status') == 'publicado' ? 'selected' : '' }}>
                                             Publicado</option>
-                                        <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Borrador
+                                        <option value="borrador" {{ old('status') == 'borrador' ? 'selected' : '' }}>Borrador
                                         </option>
                                     </select>
                                     @error('status')
