@@ -11,10 +11,11 @@
                 <div class="col-lg-8">
                     <div class="banner__content">
                         <h3 class="banner__title mb-0">
-                            Crear Nuevo Artículo
+                            Crear Nuevo Blog
                         </h3>
                         <p class="banner__subtitle mb-0">
-                            Comparte tus historias, recetas y pasión por el café de especialidad.
+                            Comparte historias, recetas o pasión por el café, has que nuestros lectores se sientan más
+                            orgullosos de nuestra ruralidad.
                         </p>
                     </div>
                 </div>
@@ -63,7 +64,7 @@
 
                             <!-- Resumen o Extracto -->
                             <div class="form-group mb-3">
-                                <label for="summary" class="form-label font-weight-bold">Resumen / Extracto</label>
+                                <label for="summary" class="form-label font-weight-bold">Resumen / Extracto*</label>
                                 <textarea class="form-control widget__form-input @error('summary') is-invalid @enderror" id="summary" name="summary"
                                     rows="3" placeholder="Breve descripción que aparecerá en la tarjeta del post...">{{ old('summary') }}</textarea>
                                 @error('summary')
@@ -74,7 +75,7 @@
                             <!-- Categorías -->
                             <div class="form-group mb-3">
                                 <label class="form-label font-weight-bold">Categorías* (Selecciona al menos una)</label>
-                                <div class="border p-3 rounded bg-light text-dark">
+                                <div class="border p-3 rounded">
                                     <div class="row">
                                         @foreach ($categories as $category)
                                             <div class="col-md-4 mb-2">
@@ -97,8 +98,8 @@
 
                             <!-- Etiquetas (Tags) -->
                             <div class="form-group mb-3">
-                                <label class="form-label font-weight-bold">Etiquetas (Opcional)</label>
-                                <div class="border p-3 rounded bg-light text-dark">
+                                <label class="form-label font-weight-bold">Etiquetas* (Selecciona al menos una)</label>
+                                <div class="border p-3 rounded">
                                     <div class="row">
                                         @foreach ($tags as $tag)
                                             <div class="col-md-3 mb-2">
@@ -121,7 +122,7 @@
                                 <label for="featured_image" class="form-label font-weight-bold">Imagen Destacada</label>
                                 <input type="file"
                                     class="form-control widget__form-input @error('featured_image') is-invalid @enderror"
-                                    id="featured_image" name="featured_image" accept="image/*">
+                                    id="featured_image" name="featured_image" accept="image/*" required>
                                 <small class="text-muted">Formatos permitidos: JPEG, PNG, JPG, WEBP (Máx. 2MB).</small>
                                 @error('featured_image')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -138,28 +139,37 @@
                                 @enderror
                             </div>
 
-                            <!-- Estado del Post -->
-                            <div class="form-group mb-4">
-                                <label for="status" class="form-label font-weight-bold">Estado de Publicación*</label>
-                                <select name="status" id="status"
-                                    class="form-control widget__form-input @error('status') is-invalid @enderror" required>
-                                    <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>
-                                        Publicado</option>
-                                    <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Borrador
-                                    </option>
-                                </select>
-                                @error('status')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+                            <!-- Estado del Post y Botones de Acción -->
+                            <div class="row align-items-end mb-4">
+                                <!-- Estado de Publicación (Más pequeño y moderado) -->
+                                <div class="col-md-4 mb-3 mb-md-0">
+                                    <label for="status" class="form-label font-weight-bold">Estado de Publicación*</label>
+                                    <select name="status" id="status"
+                                        class="form-control widget__form-input @error('status') is-invalid @enderror"
+                                        required>
+                                        <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>
+                                            Publicado</option>
+                                        <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Borrador
+                                        </option>
+                                    </select>
+                                    @error('status')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
-                            <!-- Botones de Acción -->
-                            <div class="widget__form-btn d-flex gap-2">
-                                <button type="submit" class="btn-custom flex-grow-1">Guardar y Publicar</button>
-                                <a href="{{ route('blog.list') }}" class="btn btn-outline-secondary">Cancelar</a>
+                                <!-- Botones de Acción (Guardar ocupando una tercera parte y Cancelar al lado) -->
+                                <div class="col-md-8 text-md-end">
+                                    <div class="d-flex justify-content-md-end gap-2">
+                                        <a href="{{ route('blog.list') }}"
+                                            class="btn btn-outline-secondary px-4">Cancelar</a>
+                                        <button type="submit" class="btn-custom px-4" style="max-width: 200px;">Guardar
+                                            Post</button>
+                                    </div>
+                                </div>
                             </div>
 
                         </form>
+
                     </div>
                 </div>
             </div>

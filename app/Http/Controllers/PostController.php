@@ -58,17 +58,18 @@ class PostController extends Controller
         // 1. Validar los datos del formulario
         $request->validate([
             'title' => 'required|string|max:255',
-            'summary' => 'nullable|string|max:500',
+            'summary' => 'required|string|max:500',
             'content' => 'required|string',
-            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'categories' => 'required|array', // Al menos una categoría seleccionada
+            'featured_image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048', // Máximo 2MB
+            'categories' => 'required|array|min:1', // Al menos una categoría seleccionada
+            'tags' => 'required|array|min:1', // Al menos una Etiqueta seleccionada
             'status' => 'required|in:draft,published',
         ]);
 
         // 2. Manejar la subida de la imagen destacada si existe
         $imagePath = null;
         if ($request->hasFile('featured_image')) {
-            $imagePath = $request->file('featured_image')->store('posts', 'public');
+            $imagePath = $request->file('featured_image')->store('blog', 'public');
         }
 
         // 3. Crear el post asociado al usuario autenticado
