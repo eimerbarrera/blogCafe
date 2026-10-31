@@ -67,7 +67,8 @@
                                         </small>
                                     </div>
                                     <h5 class="post-card__title mb-1">
-                                        <a href="{{ route('blog.show', ['id' => $post->id, 'slug' => $post->slug]) }}" class="text-decoration-none">
+                                        <a href="{{ route('blog.show', ['id' => $post->id, 'slug' => $post->slug]) }}"
+                                            class="text-decoration-none">
                                             {{ $post->title }}
                                         </a>
                                     </h5>
@@ -79,15 +80,17 @@
 
                             <!-- Botones de Acción (Ver / Editar / Eliminar) -->
                             <div class="d-flex mt-3 mt-md-0 ms-md-3 flex-shrink-0 gap-2">
-                                <a href="{{ route('blog.show', ['id' => $post->id, 'slug' => $post->slug]) }}" class="btn btn-sm btn-outline-success" title="Ver">
+                                <a href="{{ route('blog.show', ['id' => $post->id, 'slug' => $post->slug]) }}"
+                                    class="btn btn-sm btn-outline-success" title="Ver">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-sm btn-outline-primary" title="Editar">
+                                <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-sm btn-outline-primary"
+                                    title="Editar">
                                     <i class="bi bi-pencil"></i>
                                 </a>
 
-                                <form action="#" method="POST"
-                                    onsubmit="return confirm('¿Estás seguro de eliminar este post?');">
+                                <form action="{{ route('posts.destroy', $post->id) }}" method="POST"
+                                    class="delete-form d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">
@@ -121,3 +124,35 @@
     @include('partials.newslettre')
 
 @endsection
+
+@push('scripts')
+    <!-- CDN de SweetAlert2 (por si no lo tienes globalmente en tu base.blade.php) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteForms = document.querySelectorAll('.delete-form');
+
+            deleteForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault(); // Evitamos el envío inmediato
+
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: "¡No podrás revertir esta acción!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#198754',
+                        confirmButtonButtonText: 'Sí, ¡eliminar!',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit(); // Si confirma, enviamos el formulario
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+@endpush

@@ -23,6 +23,8 @@
 
     @include('partials.js')
 
+    @stack('scripts')
+
 </body>
 
 </html>

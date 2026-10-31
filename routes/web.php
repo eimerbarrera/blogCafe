@@ -38,6 +38,9 @@ Route::middleware('auth')->group(function () {
     // --- Rutas para la edición y actualización de posts ---
     Route::get('/mis-posts/{post}/editar', [PostController::class, 'edit'])->name('posts.edit');
     Route::put('/mis-posts/{post}', [PostController::class, 'update'])->name('posts.update');
+
+    // --- Ruta para la eliminación de posts ---
+    Route::delete('/mis-posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 });
 
 require __DIR__.'/auth.php';

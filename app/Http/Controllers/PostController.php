@@ -326,10 +326,28 @@ class PostController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina un post de la base de datos.
      */
-    public function destroy(string $id)
+    public function destroy(Post $post)
     {
-        //
+        // Validación de seguridad: verificar que el post sea del usuario logueado
+        if ($post->user_id !== Auth::id()) {
+            abort(403, 'No tienes permisos para eliminar este artículo.');
+        }
+
+        // 1. Eliminar la imagen destacada del almacenamiento físico si existe
+        if ($post->featured_image && Storage::disk('public')->exists($post->featured_image)) {
+            Storage::disk('public')->delete($post->featured_image);
+        }
+
+        // 2. Desvincular las relaciones de categorías y etiquetas
+        $post->categories()->detach();
+        $post->tags()->detach();
+
+        // 3. Eliminar el post
+        $post->delete();
+
+        // 4. Redireccionar al listado con un mensaje de éxito
+        return redirect()->route('blog.list')->with('success', '¡Artículo eliminado exitosamente!');
     }
 }
