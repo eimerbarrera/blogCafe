@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Str;
 
 class TagController extends Controller implements HasMiddleware
 {
@@ -22,7 +24,8 @@ class TagController extends Controller implements HasMiddleware
      */
     public function index()
     {
-        //
+        $tags = Tag::latest()->paginate(10);
+        return view('tags.index', compact('tags'));
     }
 
     /**
@@ -30,7 +33,7 @@ class TagController extends Controller implements HasMiddleware
      */
     public function create()
     {
-        //
+        return redirect()->route('tags.index');
     }
 
     /**
@@ -38,7 +41,16 @@ class TagController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255|unique:tags,name',
+        ]);
+
+        Tag::create([
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
+        ]);
+
+        return redirect()->route('tags.index')->with('success', '¡Etiqueta creada exitosamente!');
     }
 
     /**
@@ -46,30 +58,40 @@ class TagController extends Controller implements HasMiddleware
      */
     public function show(string $id)
     {
-        //
+        $tag = Tag::findOrFail($id);
+        return view('tags.show', compact('tag'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Tag $tag)
     {
-        //
+       $tags = Tag::latest()->paginate(10);
+        $tagEditing = $tag;
+        return view('tags.index', compact('tags', 'tagEditing'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Tag $tag)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255|unique:tags,name,' . $tag->id,
+        ]);
+
+        $tag->update([
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
+        ]);
+
+        return redirect()->route('tags.index')->with('success', '¡Etiqueta actualizada exitosamente!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Tag $tag)
     {
-        //
+        $tag->delete();
+        return redirect()->route('tags.index')->with('success', '¡Etiqueta eliminada exitosamente!');
     }
 }

@@ -79,7 +79,7 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <a class="dropdown-item" href="#">
+                                                <a class="dropdown-item" href="{{ route('tags.index') }}">
                                                     <i class="bi bi-tags"></i> Gestionar Etiquetas
                                                 </a>
                                             </li>

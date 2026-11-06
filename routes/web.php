@@ -59,7 +59,7 @@ Route::middleware(['auth', 'admin_or_editor'])->group(function () {
     Route::resource('categories', CategoryController::class)->except(['show']);
 
     // Ejemplo para etiquetas (ajusta según tus nombres de rutas existentes)
-    Route::resource('tags', TagController::class)->except(['index', 'show']);
+    Route::resource('tags', TagController::class)->except(['show']);
 });
 
 require __DIR__.'/auth.php';
