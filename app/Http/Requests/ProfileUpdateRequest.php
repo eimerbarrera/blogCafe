@@ -26,6 +26,10 @@ class ProfileUpdateRequest extends FormRequest
                 'max:255',
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
+            'description' => ['nullable', 'string', 'max:500'],
+            'urlfacebook' => ['nullable', 'url', 'max:255'],
+            'urlinstagram' => ['nullable', 'url', 'max:255'],
+            'urlyoutube' => ['nullable', 'url', 'max:255'],
         ];
     }
 }

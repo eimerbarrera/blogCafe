@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PostController::class, 'index']);
@@ -27,6 +30,8 @@ Route::view('/contacto', 'contact.index')->name('contact.index');
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    // Procesa la actualización de la contraseña
+    Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/mis-posts', [PostController::class, 'myPosts'])->name('blog.list');
@@ -41,6 +46,20 @@ Route::middleware('auth')->group(function () {
 
     // --- Ruta para la eliminación de posts ---
     Route::delete('/mis-posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+});
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/usuarios', [UserController::class, 'index'])->name('users.index');
+    Route::patch('/usuarios/{user}/rol', [UserController::class, 'updateRole'])->name('users.updateRole');
+});
+
+// Rutas protegidas para administradores y editores (Categorías y Etiquetas)
+Route::middleware(['auth', 'admin_or_editor'])->group(function () {
+    // Ejemplo para categorías (ajusta según tus nombres de rutas existentes)
+    Route::resource('categories', CategoryController::class)->except(['show']);
+
+    // Ejemplo para etiquetas (ajusta según tus nombres de rutas existentes)
+    Route::resource('tags', TagController::class)->except(['index', 'show']);
 });
 
 require __DIR__.'/auth.php';

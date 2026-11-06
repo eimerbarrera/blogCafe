@@ -2,63 +2,112 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Str;
 
-class CategoryController extends Controller
+class CategoryController extends Controller implements HasMiddleware
 {
     /**
-     * Display a listing of the resource.
+     * Aplica middleware del controlador; el grupo de rutas también protege el índice.
+     */
+    public static function middleware(): array
+    {
+        return [new Middleware(['auth', 'admin_or_editor'], except: ['index', 'show'])];
+    }
+
+    /**
+     * Muestra la lista de categorías.
      */
     public function index()
     {
-        //
+        $categories = Category::latest()->paginate(10);
+
+        return view('categories.index', compact('categories'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Muestra el formulario para crear una nueva categoría.
      */
     public function create()
     {
-        //
+        return view('categories.create');
     }
 
     /**
-     * Store a newly created resource in storage.
+     *  Almacena una nueva categoría en la base de datos.
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name',
+            'description' => 'nullable|string|max:500',
+        ]);
+
+        Category::create([
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
+            'description' => $request->description,
+        ]);
+
+        return redirect()->route('categories.index')->with('success', '¡Categoría creada exitosamente!');
     }
 
     /**
-     * Display the specified resource.
+     *Muestra el recurso especificado (Opcional según tu lógica pública).
      */
     public function show(string $id)
     {
-        //
+        $category = Category::findOrFail($id);
+
+        // Aquí podrías retornar una vista pública si lo deseas
+        return view('categories.show', compact('category'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Muestra el formulario para editar una categoría existente.
      */
-    public function edit(string $id)
+    public function edit(Category $category) // Usamos Route Model Binding para mayor limpieza
     {
-        //
+        $categories = Category::latest()->paginate(10);
+        $categoryEditing = $category; // Variable para llenar el formulario de edición
+
+        return view('categories.index', compact('categories', 'categoryEditing'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza la categoría especificada en la base de datos.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Category $category)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name,'.$category->id,
+            'description' => 'nullable|string|max:500',
+        ]);
+
+        $category->update([
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
+            'description' => $request->description,
+        ]);
+
+        return redirect()->route('categories.index')->with('success', '¡Categoría actualizada exitosamente!');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina la categoría especificada de la base de datos.
      */
-    public function destroy(string $id)
+    public function destroy(Category $category)
     {
-        //
+        // Validar si tiene posts asociados antes de eliminar
+        if ($category->posts()->count() > 0) {
+            return back()->with('error', 'No se puede eliminar la categoría porque tiene artículos asociados.');
+        }
+
+        $category->delete();
+
+        return redirect()->route('categories.index')->with('success', '¡Categoría eliminada exitosamente!');
     }
 }

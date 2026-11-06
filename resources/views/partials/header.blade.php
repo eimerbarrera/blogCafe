@@ -42,18 +42,48 @@
                                         <i class="bi bi-person-circle"></i> {{ Auth::user()->name }}
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                        <!-- Enlace a la gestión del perfil (Ruta nativa de Laravel Breeze) -->
+                                        <!-- Enlace a la gestión del perfil -->
                                         <li>
                                             <a class="dropdown-item" href="{{ route('profile.edit') }}">
                                                 <i class="bi bi-gear"></i> Perfil
                                             </a>
                                         </li>
 
+                                        <!-- Mis Publicaciones -->
                                         <li>
                                             <a class="dropdown-item" href="{{ route('blog.list') }}">
                                                 <i class="bi bi-journal-text"></i> Mis Publicaciones
                                             </a>
                                         </li>
+
+                                        <!-- Separador para opciones administrativas -->
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+
+                                        <!-- Opciones exclusivas para ADMINISTRADOR -->
+                                        @if (Auth::user()->role === 'admin')
+                                            <li>
+                                                <a class="dropdown-item font-weight-bold"
+                                                    href="{{ route('admin.users.index') }}">
+                                                    <i class="bi bi-people-fill"></i> Gestionar Usuarios
+                                                </a>
+                                            </li>
+                                        @endif
+
+                                        <!-- Opciones para ADMINISTRADOR y EDITOR (Categorías y Etiquetas) -->
+                                        @if (in_array(Auth::user()->role, ['admin', 'editor']))
+                                            <li>
+                                                <a class="dropdown-item" href="{{ route('categories.index') }}">
+                                                    <i class="bi bi-tags-fill"></i> Gestionar Categorías
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="#">
+                                                    <i class="bi bi-tags"></i> Gestionar Etiquetas
+                                                </a>
+                                            </li>
+                                        @endif
 
                                         <li>
                                             <hr class="dropdown-divider">
