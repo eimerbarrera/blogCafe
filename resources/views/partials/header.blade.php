@@ -115,7 +115,7 @@
             <!-- 3. ACCIONES DEL HEADER (Alineadas automáticamente a la derecha) -->
             <div class="header__action-items d-flex align-items-center gap-3">
                 <!-- Redes Sociales -->
-                <ul class="list-inline social-media social-media--layout-one m-0 d-flex align-items-center">
+                <ul class="list-inline social-media social-media--layout-one d-flex align-items-center">
                     <li class="social-media__item">
                         <a href="{{ config('services.social.facebook') }}" target="_blank" rel="noopener noreferrer"
                             class="social-media__link">

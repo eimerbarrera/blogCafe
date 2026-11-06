@@ -105,7 +105,7 @@
                             <h4>Aún no tienes publicaciones</h4>
                             <p class="text-muted mb-3">Empieza a compartir tu pasión por el café creando tu primer artículo.
                             </p>
-                            <a href="#" class="btn-custom btn-sm">Crear mi primer post</a>
+                            <a href="{{ route('posts.create') }}" class="btn-custom btn-sm">Crear mi primer post</a>
                         </div>
                     @endforelse
 

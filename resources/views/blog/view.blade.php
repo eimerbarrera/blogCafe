@@ -26,7 +26,8 @@
                             <div class="post-single__content">
                                 <!-- Categoría dinámica -->
                                 @if ($post->categories->isNotEmpty())
-                                    <a href="#" class="category">{{ $post->categories->first()->name }}</a>
+                                    <a href="{{ route('blog.category', $post->categories->first()->slug) }}"
+                                        class="category">{{ $post->categories->first()->name }}</a>
                                 @else
                                     <a href="#" class="category">Café de Especialidad</a>
                                 @endif
