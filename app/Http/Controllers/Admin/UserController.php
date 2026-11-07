@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Mail\RoleUpdatedToEditorNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -47,9 +49,19 @@ class UserController extends Controller
             return back()->with('error', 'No puedes quitarte el rol de administrador a ti mismo.');
         }
 
+        // 1. Guardamos el rol anterior antes de actualizar
+        $oldRole = $user->role;
+        $newRole = $request->role;
+
+        // 2. Actualizamos el usuario con el nuevo rol
         $user->update([
-            'role' => $request->role,
+            'role' => $newRole,
         ]);
+
+        // 3. NUEVO: Si antes era 'user' y ahora pasa a ser 'editor', enviamos la notificación
+        if ($oldRole === 'user' && $newRole === 'editor') {
+            Mail::to($user->email)->send(new RoleUpdatedToEditorNotification($user));
+        }
 
         return back()->with('success', "¡El rol de {$user->name} ha sido actualizado exitosamente!");
     }
