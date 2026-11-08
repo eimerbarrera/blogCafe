@@ -71,7 +71,9 @@
                                 <div class="widget__form-controls-checkbox">
                                     <input type="checkbox" class="widget__form-controls-input" id="terms" required>
                                     <label class="widget__form-controls-label" for="terms">
-                                        Acepto los <a href="#" class="widget__form-link">términos y condiciones</a>
+                                        Acepto las <a href="{{ route('page.privacy') }}" class="widget__form-link">Política de
+                                            Privacidad</a>, los <a href="{{ route('page.terms') }}" class="widget__form-link">términos y
+                                            condiciones</a>
                                     </label>
                                 </div>
                             </div>

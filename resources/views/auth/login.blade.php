@@ -76,6 +76,13 @@
                                 </p>
                             @endif
                         </form>
+
+                        <p class="text-muted small text-center mt-3">
+                            Al registrarte en nuestro blog - Café Cosecha y grano, aceptas nuestra
+                            <a href="{{ route('page.privacy') }}" class="widget__form-link">Política de
+                                Privacidad</a>.
+                        </p>
+
                     </div>
                 </div>
             </div>

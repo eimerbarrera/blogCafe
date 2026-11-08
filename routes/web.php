@@ -6,6 +6,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PageController;
 
 Route::get('/', [PostController::class, 'index']);
 
@@ -62,4 +63,9 @@ Route::middleware(['auth', 'admin_or_editor'])->group(function () {
     Route::resource('tags', TagController::class)->except(['show']);
 });
 
-require __DIR__.'/auth.php';
+// Rutas para páginas legales
+Route::get('/politica-de-privacidad', [PageController::class, 'privacy'])->name('page.privacy');
+Route::get('/terminos-y-condiciones', [PageController::class, 'terms'])->name('page.terms');
+Route::get('/aviso-legal', [PageController::class, 'legal'])->name('page.legal');
+
+require __DIR__ . '/auth.php';
