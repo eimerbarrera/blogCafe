@@ -32,6 +32,19 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+
+        // Validación del campo trampa anti-bot
+        if (!empty($request->website_hp)) {
+            // El bot cayó en la trampa, simulamos un éxito o bloqueamos silenciosamente
+            return redirect()->route('login')->with('success', '¡Registro completado exitosamente!');
+        }
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],

@@ -76,6 +76,12 @@
                                 </div>
                             </div>
 
+                            <!-- Campo trampa oculto anti-bot (Honeypot) -->
+                            <div style="display: none;" aria-hidden="true">
+                                <label for="website_hp">Si eres humano, deja este campo en blanco</label>
+                                <input type="text" id="website_hp" name="website_hp" value="">
+                            </div>
+
                             <!-- Botón de Registro -->
                             <div class="widget__form-btn mb-3">
                                 <button type="submit" class="btn-custom w-100">Registrarse Ahora</button>
