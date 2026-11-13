@@ -25,12 +25,21 @@
 
                             <div class="post-single__content">
                                 <!-- Categoría dinámica -->
-                                @if ($post->categories->isNotEmpty())
+                                {{-- @if ($post->categories->isNotEmpty())
                                     <a href="{{ route('blog.category', $post->categories->first()->slug) }}"
                                         class="category">{{ $post->categories->first()->name }}</a>
                                 @else
                                     <a href="#" class="category">Café de Especialidad</a>
-                                @endif
+                                @endif --}}
+
+                                @forelse ($post->categories as $category)
+                                    <a href="{{ route('blog.category', $category->slug) }}"
+                                        class="category me-2 mb-1 d-inline-block">
+                                        {{ $category->name }}
+                                    </a>
+                                @empty
+                                    <a href="#" class="category">Café de Especialidad</a>
+                                @endforelse
 
                                 <!-- Título dinámico -->
                                 <h2 class="post-single__title">{{ $post->title }}</h2>

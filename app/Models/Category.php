@@ -14,10 +14,16 @@ class Category extends Model
         'name',
         'slug',
         'description',
+        'user_id',
     ];
 
     public function posts(): BelongsToMany
     {
         return $this->belongsToMany(Post::class, 'post_categories');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Str;
@@ -48,6 +49,7 @@ class TagController extends Controller implements HasMiddleware
         Tag::create([
             'name' => $request->name,
             'slug' => Str::slug($request->name),
+            'user_id' => Auth::id(),
         ]);
 
         return redirect()->route('tags.index')->with('success', '¡Etiqueta creada exitosamente!');

@@ -117,6 +117,7 @@
                                     <tr>
                                         <th>Nombre</th>
                                         <th>Slug</th>
+                                        <th>Creado Por</th>
                                         <th>Descripción</th>
                                         <th class="text-end">Acciones</th>
                                     </tr>
@@ -128,10 +129,15 @@
                                                 <strong>{{ $cat->name }}</strong>
                                             </td>
                                             <td><code>{{ $cat->slug }}</code></td>
+                                            <td>
+                                                <span class="text-muted">
+                                                    {{ $cat->user->name ?? 'Sistema' }}
+                                                </span>
+                                            </td>
                                             <td>{{ Str::limit($cat->description, 40) ?: 'Sin descripción' }}</td>
                                             <td class="text-end">
                                                 <div class="d-flex justify-content-end gap-2">
-                                                    <!-- Botón Editar (Recarga la misma vista con el registro cargado) -->
+                                                    <!-- Botón Editar -->
                                                     <a href="{{ route('categories.edit', $cat->id) }}"
                                                         class="btn btn-sm btn-outline-primary" title="Editar">
                                                         <i class="bi bi-pencil"></i>
@@ -152,7 +158,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="4" class="text-center py-4 text-muted">
+                                            <td colspan="5" class="text-center py-4 text-muted">
                                                 No hay categorías registradas aún. ¡Crea la primera a la izquierda!
                                             </td>
                                         </tr>

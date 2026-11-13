@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Str;
@@ -50,6 +51,7 @@ class CategoryController extends Controller implements HasMiddleware
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'description' => $request->description,
+            'user_id' => Auth::id(), // <--- Asignamos el autor / creador
         ]);
 
         return redirect()->route('categories.index')->with('success', '¡Categoría creada exitosamente!');
@@ -83,7 +85,7 @@ class CategoryController extends Controller implements HasMiddleware
     public function update(Request $request, Category $category)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,'.$category->id,
+            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
             'description' => 'nullable|string|max:500',
         ]);
 
