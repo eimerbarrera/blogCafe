@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Notifications\Notifiable;
@@ -17,13 +18,19 @@ use Illuminate\Notifications\Messages\MailMessage;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
      */
+
+    protected $dates = [
+        'deleted_at',
+        'last_login_at'
+    ];
+
     protected $fillable = [
         'name',
         'email',
@@ -44,12 +51,20 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'last_login_at' => 'datetime', // <--- Añade esta línea para que Laravel lo trate como objeto Carbon automáticamente
         ];
     }
 
     public function posts()
     {
         return $this->hasMany(Post::class);
+    }
+
+    // Método auxiliar para obtener la fecha del último post
+    public function lastPostDate()
+    {
+        $latestPost = $this->posts()->latest()->first();
+        return $latestPost ? $latestPost->created_at->format('d/m/Y H:i') : 'Sin publicaciones';
     }
 
     /**

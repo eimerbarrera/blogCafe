@@ -72,7 +72,10 @@
                                         <th>Nombre</th>
                                         <th>Correo</th>
                                         <th>Rol Actual</th>
+                                        <th>Último Acceso</th> <!-- NUEVO (Paso 5.2) -->
+                                        <th>Último Post</th> <!-- NUEVO (Paso 5.2) -->
                                         <th>Cambiar Rol</th>
+                                        <th>Acciones</th> <!-- NUEVO (Paso 5.1 Papelera) -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -85,11 +88,19 @@
                                             <td>
                                                 <span
                                                     class="badge
-                                                @if ($usuario->role == 'admin') bg-danger
-                                                @elseif($usuario->role == 'editor') bg-success
-                                                @else bg-secondary @endif">
+                            @if ($usuario->role == 'admin') bg-danger
+                            @elseif($usuario->role == 'editor') bg-success
+                            @else bg-secondary @endif">
                                                     {{ ucfirst($usuario->role) }}
                                                 </span>
+                                            </td>
+                                            <!-- NUEVO: Mostrar Último Acceso (Paso 5.2) -->
+                                            <td>
+                                                {{ $usuario->last_login_at ? $usuario->last_login_at->format('d/m/Y H:i') : 'Nunca' }}
+                                            </td>
+                                            <!-- NUEVO: Mostrar Último Post Publicado (Paso 5.2) -->
+                                            <td>
+                                                {{ method_exists($usuario, 'lastPostDate') ? $usuario->lastPostDate() : 'Sin publicaciones' }}
                                             </td>
                                             <td>
                                                 <form action="{{ route('admin.users.updateRole', $usuario->id) }}"
@@ -111,6 +122,29 @@
                                                     <button type="submit"
                                                         class="btn btn-sm btn-outline-primary">Actualizar</button>
                                                 </form>
+                                            </td>
+                                            <!-- NUEVO: Acciones de Papelera / Soft Delete (Paso 5.1) -->
+                                            <td>
+                                                @if ($usuario->trashed())
+                                                    <form action="{{ route('admin.users.restore', $usuario->id) }}"
+                                                        method="POST" class="d-inline">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-success"
+                                                            title="Restaurar usuario">
+                                                            <i class="bi bi-arrow-counterclockwise"></i>
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <form action="{{ route('admin.users.destroy', $usuario->id) }}"
+                                                        method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-danger"
+                                                            title="Enviar a papelera">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach

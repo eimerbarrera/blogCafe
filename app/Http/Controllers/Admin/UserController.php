@@ -22,6 +22,15 @@ class UserController extends Controller
         // Capturamos el término de búsqueda si existe
         $search = $request->input('search');
 
+        // Si solicita ver la papelera
+        if ($request->has('trash')) {
+            $users = User::onlyTrashed()->get();
+            $isTrashView = true;
+        } else {
+            $users = User::all();
+            $isTrashView = false;
+        }
+
         // Consultamos los usuarios filtrando por nombre o correo si hay búsqueda
         $users = User::when($search, function ($query, $search) {
             return $query->where('name', 'like', "%{$search}%")
@@ -31,7 +40,7 @@ class UserController extends Controller
             ->paginate(10)
             ->withQueryString(); // Mantiene el parámetro de búsqueda al paginar
 
-        return view('admin.users.index', compact('users', 'search'));
+        return view('admin.users.index', compact('users', 'search', 'isTrashView'));
     }
 
     /**
@@ -64,5 +73,29 @@ class UserController extends Controller
         }
 
         return back()->with('success', "¡El rol de {$user->name} ha sido actualizado exitosamente!");
+    }
+
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete(); // Soft delete
+
+        return redirect()->route('admin.users.index')->with('success', 'Usuario enviado a la papelera correctamente.');
+    }
+
+    public function restore($id)
+    {
+        $user = User::onlyTrashed()->findOrFail($id);
+        $user->restore();
+
+        return redirect()->route('admin.users.index', ['trash' => 1])->with('success', 'Usuario restaurado exitosamente.');
+    }
+
+    public function forceDelete($id)
+    {
+        $user = User::onlyTrashed()->findOrFail($id);
+        $user->forceDelete(); // Borrado definitivo
+
+        return redirect()->route('admin.users.index', ['trash' => 1])->with('success', 'Usuario eliminado permanentemente.');
     }
 }

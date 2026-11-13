@@ -52,6 +52,9 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/usuarios', [UserController::class, 'index'])->name('users.index');
     Route::patch('/usuarios/{user}/rol', [UserController::class, 'updateRole'])->name('users.updateRole');
+    // Rutas añadidas para Soft Deletes / Papelera y gestión de usuarios
+    Route::delete('/usuarios/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::post('/usuarios/{user}/restaurar', [UserController::class, 'restore'])->name('users.restore');
 });
 
 // Rutas protegidas para administradores y editores (Categorías y Etiquetas)
