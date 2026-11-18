@@ -100,7 +100,7 @@
                                 @if ($post->categories->isNotEmpty())
                                     @foreach ($post->categories as $category)
                                         <a href="{{ route('blog.category', $category->slug) }}"
-                                            class="category">{{ $category->name }}</a>
+                                            class="category mb-2">{{ $category->name }}</a>
                                     @endforeach
                                 @else
                                     <span class="category">Café de Especialidad</span>
