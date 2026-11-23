@@ -217,7 +217,7 @@
                             <h5 class="widget__title">ads</h5>
                             <div class="widget__ads">
                                 <a href="#" class="widget__ads-link">
-                                    <img src="assets/img/ads/ads3.jpg" alt="" class="widget__ads-img">
+                                    <img src="{{ asset('assets/img/ads/ads3.jpg') }}" alt="" class="widget__ads-img">
                                 </a>
                             </div>
                         </div>
