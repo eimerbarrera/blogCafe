@@ -13,8 +13,8 @@
                     {{ $posts->total() }} resultados.</p>
             </div>
         @endif
-        <div class="row">
-            <div class="container-fluid">
+        <div class="container-fluid">
+            <div class="row">
                 <div class="col-lg-8">
                     <div class="banner__content">
                         <!-- Migas de pan dinámicas -->
@@ -230,6 +230,6 @@
 
     <!--newslettre-->
     @include('partials.newslettre')
-    
+
 
 @endsection
