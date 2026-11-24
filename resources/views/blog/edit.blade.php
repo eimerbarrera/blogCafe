@@ -144,7 +144,7 @@
                             <div class="form-group mb-3">
                                 <label for="content" class="form-label font-weight-bold">Contenido del Artículo*</label>
                                 <textarea class="form-control widget__form-input @error('content') is-invalid @enderror" id="content" name="content"
-                                    rows="10" placeholder="Escribe el contenido completo de tu artículo aquí..." required>{{ old('content', $post->content) }}</textarea>
+                                    rows="10" placeholder="Escribe el contenido completo de tu artículo aquí...">{{ old('content', $post->content) }}</textarea>
                                 @error('content')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -190,5 +190,265 @@
 
     <!--newsletter-->
     @include('partials.newslettre')
+
+    @push('scripts')
+        <script src="{{ asset('assets/js/tinymce/tinymce.min.js') }}"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const contentTextarea = document.querySelector("textarea#content");
+                if (!contentTextarea) return;
+
+                tinymce.init({
+                    selector: "textarea#content",
+                    height: 650,
+                    menubar: true,
+                    branding: false,
+                    language: 'es',
+                    language_url: '{{ asset('assets/js/tinymce/langs/es.js') }}',
+                    formats: {
+                        code: {
+                            inline: 'code'
+                        },
+                        codeblock: {
+                            block: 'pre',
+                            wrapper: true
+                        }
+                    },
+                    plugins: `
+                    advlist autolink lists link image charmap preview anchor
+                    searchreplace visualblocks code fullscreen
+                    insertdatetime media table paste help wordcount
+                `,
+                    toolbar: `
+                    undo redo | formatselect styleselect |
+                    bold italic underline forecolor backcolor |
+                    alignleft aligncenter alignright alignjustify |
+                    bullist numlist outdent indent |
+                    link image media table blockquote |
+                    shortcodeButton coverButton templateButton |
+                    removeformat | code | preview
+                `,
+                    content_style: `
+                    body {
+                        font-family: 'Georgia', serif;
+                        font-size: 18px;
+                        line-height: 1.7;
+                        color: #333;
+                        padding: 20px;
+                        max-width: 900px;
+                        margin: auto;
+                    }
+                    h1 { font-size: 32px; font-weight: bold; margin-top: 30px; }
+                    h2 { font-size: 26px; margin-top: 25px; }
+                    h3 { font-size: 22px; margin-top: 20px; }
+                    blockquote {
+                        border-left: 4px solid #0099ff;
+                        padding-left: 15px;
+                        margin-left: 0;
+                        color: #555;
+                        font-style: italic;
+                    }
+                    .alert-box {
+                        padding: 15px;
+                        background: #ffeeba;
+                        border-left: 5px solid #f0ad4e;
+                        margin: 20px 0;
+                    }
+                    .note-box {
+                        padding: 15px;
+                        background: #e7f3ff;
+                        border-left: 5px solid #1e90ff;
+                        margin: 20px 0;
+                    }
+                    .highlight-cover {
+                        border: 3px solid #007bff;
+                        padding: 5px;
+                        display: block;
+                        margin: 20px auto;
+                        max-width: 100%;
+                    }
+                    pre {
+                        background-color: #1e1e1e !important;
+                        color: #d4d4d4 !important;
+                        padding: 16px !important;
+                        border-radius: 8px !important;
+                        font-family: "Fira Code", "Courier New", monospace !important;
+                        font-size: 15px !important;
+                        line-height: 1.6 !important;
+                        overflow-x: auto !important;
+                        white-space: pre !important;
+                        border: 1px solid #333 !important;
+                        box-shadow: inset 0 0 10px rgba(0,0,0,0.4) !important;
+                    }
+                    code {
+                        background-color: #2d2d2d !important;
+                        color: #ffd479 !important;
+                        padding: 3px 6px !important;
+                        border-radius: 4px !important;
+                        font-family: "Fira Code", "Courier New", monospace !important;
+                        font-size: 14px !important;
+                    }
+                    pre code {
+                        background: transparent !important;
+                        color: inherit !important;
+                        padding: 0 !important;
+                    }
+                `,
+                    setup: function(editor) {
+                        // Sincronizar contenido con el textarea en cada cambio y antes de enviar el formulario
+                        editor.on('change keyup SetContent', function() {
+                            editor.save();
+                        });
+
+                        const form = contentTextarea.closest('form');
+                        if (form) {
+                            form.addEventListener('submit', function() {
+                                tinymce.triggerSave();
+                            });
+                        }
+
+                        // Botón de Shortcodes
+                        editor.ui.registry.addButton('shortcodeButton', {
+                            text: 'Shortcodes',
+                            icon: 'code',
+                            onAction: function() {
+                                editor.windowManager.open({
+                                    title: 'Insertar Shortcode',
+                                    body: {
+                                        type: 'panel',
+                                        items: [{
+                                            type: 'textarea',
+                                            name: 'sc',
+                                            label: 'Shortcode'
+                                        }]
+                                    },
+                                    buttons: [{
+                                            text: 'Insertar',
+                                            type: 'submit'
+                                        },
+                                        {
+                                            text: 'Cancelar',
+                                            type: 'cancel'
+                                        }
+                                    ],
+                                    onSubmit: function(api) {
+                                        const data = api.getData();
+                                        if (data.sc && data.sc.trim() !== '') {
+                                            editor.insertContent('[' + data.sc
+                                            .trim() + ']');
+                                        }
+                                        api.close();
+                                    }
+                                });
+                            }
+                        });
+
+                        // Botón de Portada Destacada
+                        editor.ui.registry.addButton('coverButton', {
+                            text: 'Portada',
+                            icon: 'image',
+                            onAction: function() {
+                                editor.windowManager.open({
+                                    title: 'Insertar portada destacada',
+                                    body: {
+                                        type: 'panel',
+                                        items: [{
+                                            type: 'input',
+                                            name: 'img',
+                                            label: 'URL de imagen'
+                                        }]
+                                    },
+                                    buttons: [{
+                                            text: 'Insertar',
+                                            type: 'submit'
+                                        },
+                                        {
+                                            text: 'Cancelar',
+                                            type: 'cancel'
+                                        }
+                                    ],
+                                    onSubmit: function(api) {
+                                        const data = api.getData();
+                                        if (data.img && data.img.trim() !== '') {
+                                            editor.insertContent(
+                                                '<img src="' + data.img.trim() +
+                                                '" class="highlight-cover" />'
+                                            );
+                                        }
+                                        api.close();
+                                    }
+                                });
+                            }
+                        });
+
+                        // Botón de Plantillas
+                        editor.ui.registry.addMenuButton('templateButton', {
+                            text: 'Plantillas',
+                            fetch: function(callback) {
+                                callback([{
+                                        type: 'menuitem',
+                                        text: 'Plantilla de artículo',
+                                        onAction: function() {
+                                            editor.insertContent(`
+                                            <h1>Título del Artículo</h1>
+                                            <p><strong>Subtítulo introductorio aquí...</strong></p>
+                                            <p>Contenido principal del artículo. Escribe aquí...</p>
+                                            <blockquote>Cita destacada del artículo.</blockquote>
+                                        `);
+                                        }
+                                    },
+                                    {
+                                        type: 'menuitem',
+                                        text: 'Caja de alerta',
+                                        onAction: function() {
+                                            editor.insertContent(`
+                                            <div class="alert-box">
+                                                <strong>Atención:</strong> Escribe aquí la advertencia o información importante.
+                                            </div>
+                                        `);
+                                        }
+                                    },
+                                    {
+                                        type: 'menuitem',
+                                        text: 'Nota destacada',
+                                        onAction: function() {
+                                            editor.insertContent(`
+                                            <div class="note-box">
+                                                <strong>Nota:</strong> Información importante o resumen clave del artículo.
+                                            </div>
+                                        `);
+                                        }
+                                    }
+                                ]);
+                            }
+                        });
+                    },
+                    media_url_resolver: function(data, resolve) {
+                        const youtubeRegex =
+                            /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]{11})/;
+                        const match = youtubeRegex.exec(data.url);
+
+                        if (match) {
+                            resolve({
+                                html: `<div style="position:relative;padding-bottom:56.25%;height:0;">
+                                <iframe src="https://www.youtube.com/embed/${match[1]}"
+                                style="position:absolute;top:0;left:0;width:100%;height:100%;"
+                                frameborder="0" allowfullscreen></iframe>
+                            </div>`
+                            });
+                        } else {
+                            resolve({
+                                html: ''
+                            });
+                        }
+                    },
+                    images_upload_handler: function(blobInfo, success, failure) {
+                        success("data:" + blobInfo.blob().type + ";base64," + blobInfo.base64());
+                    },
+                    placeholder: "Escribe el contenido completo de tu artículo aquí..."
+                });
+            });
+        </script>
+    @endpush
 
 @endsection

@@ -230,5 +230,6 @@
 
     <!--newslettre-->
     @include('partials.newslettre')
+    
 
 @endsection
